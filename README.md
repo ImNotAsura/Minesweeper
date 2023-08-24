@@ -13,3 +13,7 @@ Flood feature will automatically reveal empty spaces that will not have number o
 
 MVP
 Able to render a board and able to click on the cells, with game ending when bomb is clicked
+
+![Picture1](./images/Minesweeper%20-%202%20page%20draft.jpg)
+![Picture2](./images/Page1.jpg)
+![Picture3](./images/Page2.jpg)
