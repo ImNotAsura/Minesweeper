@@ -12,10 +12,19 @@ const board = document.querySelector("#board");
 
 /*----- event listeners -----*/
 const handleCellClick = (row, col) => {
-	console.log(row, col);
 	const cell = minefield[row][col];
-	cell.revealed = true;
-	console.log(minefield);
+
+	if (!cell.revealed && !cell.flagged) {
+		cell.revealed = true;
+		console.log(minefield);
+		renderCell(cell);
+
+		if (cell.mine) {
+			//* Game Over
+		} else {
+			checkWin();
+		}
+	}
 };
 
 const handleRightClick = (row, col) => {
@@ -36,16 +45,21 @@ const renderBoard = () => {
 				renderBoard();
 			});
 
-			cell.addEventListener("mousedown", (event) => {
-				if (event.button === 2) {
-					event.preventDefault();
-					handleRightClick(i, j);
-					renderBoard();
-				}
+			cell.addEventListener("contextmenu", (event) => {
+				event.preventDefault();
+				handleRightClick(i, j);
+				renderBoard();
 			});
 
 			board.appendChild(cell);
 		}
+	}
+};
+
+const renderCell = (cell) => {
+	//* Reveal numbers
+	if (cell.flagged) {
+		//* Place a flag
 	}
 };
 
@@ -66,7 +80,19 @@ const initBoard = () => {
 	placeMines();
 };
 
-const placeMines = () => {};
+const placeMines = () => {
+	let placedMines = 0;
+	while (placedMines < numMines) {
+		const row = Math.floor(Math.random() * rows);
+		const col = Math.floor(Math.random() * cols);
+		if (!minefield[row][col].mine) {
+			minefield[row][col].mine = true;
+			placedMines++;
+		}
+	}
+};
+
+const checkWin = () => {};
 
 function init() {
 	initBoard();
