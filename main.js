@@ -7,23 +7,20 @@ const numMines = 10;
 /*----- state variables -----*/
 let minefield = [];
 
-for (let i = 0; i < rows; i++) {
-	minefield[i] = [];
-	for (let j = 0; j < cols; j++) {
-		minefield[i][j] = {};
-	}
-}
-console.log(minefield);
-
 /*----- cached elements -----*/
 const board = document.querySelector("#board");
 
 /*----- event listeners -----*/
 const handleCellClick = (row, col) => {
 	console.log(row, col);
+	const cell = minefield[row][col];
+	cell.revealed = true;
+	console.log(minefield);
 };
 
-const handleRightClick = (row, col) => {};
+const handleRightClick = (row, col) => {
+	console.log(row, col);
+};
 
 /*----- render functions -----*/
 const renderBoard = () => {
@@ -55,6 +52,17 @@ const renderBoard = () => {
 /*----- game logic functions -----*/
 const initBoard = () => {
 	//* Initialise the minefield and place mines
+	for (let i = 0; i < rows; i++) {
+		minefield[i] = [];
+		for (let j = 0; j < cols; j++) {
+			minefield[i][j] = {
+				mine: false,
+				revealed: false,
+				flagged: false,
+			};
+		}
+	}
+	console.log(minefield);
 	placeMines();
 };
 
