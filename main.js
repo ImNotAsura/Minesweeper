@@ -2,7 +2,7 @@
 //* Fixed constants for now, will allow for user input in the future
 const rows = 8;
 const cols = 8;
-const numMines = 10;
+const numMines = 20;
 
 /*----- state variables -----*/
 let minefield = [];
@@ -89,7 +89,7 @@ const renderLosePage = () => {
 
 /*----- game logic functions -----*/
 const initBoard = () => {
-	//* Initialise the minefield and place mines
+	//* Initialise the minefield, place mines & calculateAdjMines
 	for (let i = 0; i < rows; i++) {
 		minefield[i] = [];
 		for (let j = 0; j < cols; j++) {
@@ -97,13 +97,15 @@ const initBoard = () => {
 				mine: false,
 				revealed: false,
 				flagged: false,
+				adjMines: 0,
 				row: i,
 				col: j,
 			};
 		}
 	}
-	console.log(minefield);
 	placeMines();
+	calculateAdjMines();
+	console.log(minefield);
 };
 
 const placeMines = () => {
@@ -116,6 +118,29 @@ const placeMines = () => {
 			placedMines++;
 		}
 	}
+};
+
+const calculateAdjMines = () => {
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			const cell = minefield[i][j];
+			if (!cell.mine) {
+				cell.adjMines = countAdjMines(i, j);
+			}
+		}
+	}
+};
+
+const countAdjMines = (row, col) => {
+	let count = 0;
+	for (let i = Math.max(0, row - 1); i <= Math.min(row + 1, rows - 1); i++) {
+		for (let j = Math.max(0, col - 1); j <= Math.min(col + 1, cols - 1); j++) {
+			if (minefield[i][j].mine) {
+				count++;
+			}
+		}
+	}
+	return count;
 };
 
 const checkWin = () => {
