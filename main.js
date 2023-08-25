@@ -2,7 +2,7 @@
 //* Fixed constants for now, will allow for user input in the future
 const rows = 8;
 const cols = 8;
-const numMines = 20;
+const numMines = 10;
 
 /*----- state variables -----*/
 let minefield = [];
@@ -21,6 +21,9 @@ const handleCellClick = (row, col) => {
 		if (cell.mine) {
 			renderLosePage();
 		} else {
+			if (cell.adjMines === 0) {
+				floodFill(row, col);
+			}
 			checkWin();
 		}
 	}
@@ -28,7 +31,17 @@ const handleCellClick = (row, col) => {
 
 const handleRightClick = (row, col) => {
 	const cell = minefield[row][col];
-	cell.flagged = true;
+
+	if (cell.revealed) {
+		return;
+	}
+
+	if (cell.flagged) {
+		cell.flagged = false;
+	} else {
+		cell.flagged = true;
+	}
+
 	renderCell(cell);
 };
 
@@ -62,14 +75,13 @@ const renderCell = (cell) => {
 		`.cell[data-row="${cell.row}"][data-col="${cell.col}"]`,
 	);
 	console.log(cellElement);
-	console.log(cell.mine);
 
 	if (cell.revealed) {
 		cellElement.classList.add("revealed");
 		if (cell.mine) {
 			cellElement.innerHTML = "B";
 		} else {
-			cellElement.innerHTML = "O";
+			cellElement.innerHTML = cell.adjMines;
 		}
 	} else if (cell.flagged) {
 		cellElement.classList.add("flagged");
@@ -98,8 +110,6 @@ const initBoard = () => {
 				revealed: false,
 				flagged: false,
 				adjMines: 0,
-				row: i,
-				col: j,
 			};
 		}
 	}
@@ -141,6 +151,23 @@ const countAdjMines = (row, col) => {
 		}
 	}
 	return count;
+};
+
+const floodFill = (row, col) => {
+	for (let i = row - 1; i <= row + 1; i++) {
+		for (let j = col - 1; j <= col + 1; j++) {
+			if (i >= 0 && i < rows && j >= 0 && j < cols) {
+				const cell = minefield[i][j];
+				if (!cell.revealed && !cell.flagged) {
+					cell.revealed = true;
+					renderCell(cell);
+					if (cell.adjMines === 0) {
+						floodFill(i, j);
+					}
+				}
+			}
+		}
+	}
 };
 
 const checkWin = () => {
