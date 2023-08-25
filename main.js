@@ -16,11 +16,10 @@ const handleCellClick = (row, col) => {
 
 	if (!cell.revealed && !cell.flagged) {
 		cell.revealed = true;
-		console.log(minefield);
 		renderCell(cell);
 
 		if (cell.mine) {
-			//* Game Over
+			//* Game Over (Reveal )
 		} else {
 			checkWin();
 		}
@@ -28,7 +27,9 @@ const handleCellClick = (row, col) => {
 };
 
 const handleRightClick = (row, col) => {
+	const cell = minefield[row][col];
 	console.log(row, col);
+	renderCell(cell);
 };
 
 /*----- render functions -----*/
@@ -39,16 +40,16 @@ const renderBoard = () => {
 		for (let j = 0; j < cols; j++) {
 			const cell = document.createElement("div");
 			cell.classList.add("cell");
+			cell.setAttribute("data-row", i);
+			cell.setAttribute("data-col", j);
 
 			cell.addEventListener("click", () => {
 				handleCellClick(i, j);
-				renderBoard();
 			});
 
 			cell.addEventListener("contextmenu", (event) => {
 				event.preventDefault();
 				handleRightClick(i, j);
-				renderBoard();
 			});
 
 			board.appendChild(cell);
@@ -57,10 +58,19 @@ const renderBoard = () => {
 };
 
 const renderCell = (cell) => {
+	const cellElement = document.querySelector(
+		`.cell[data-row="${cell.row}"][data-col="${cell.col}"]`,
+	);
+	console.log(cellElement);
+	console.log(cell);
 	//* Reveal numbers
 	if (cell.flagged) {
 		//* Place a flag
 	}
+};
+
+const renderWinPage = () => {
+	console.log("You Win!");
 };
 
 /*----- game logic functions -----*/
@@ -73,6 +83,8 @@ const initBoard = () => {
 				mine: false,
 				revealed: false,
 				flagged: false,
+				row: i,
+				col: j,
 			};
 		}
 	}
@@ -92,7 +104,24 @@ const placeMines = () => {
 	}
 };
 
-const checkWin = () => {};
+const checkWin = () => {
+	let allNonMinesRevealed = true;
+
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			const cell = minefield[i][j];
+			//* If the cell does not have a mine and is not revealed, game continues
+			if (!cell.mine && !cell.revealed) {
+				allNonMinesRevealed = false;
+				break;
+			}
+		}
+	}
+
+	if (allNonMinesRevealed) {
+		renderWinPage();
+	}
+};
 
 function init() {
 	initBoard();
