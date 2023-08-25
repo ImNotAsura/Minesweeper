@@ -24,4 +24,14 @@
 	cursor: pointer;
 	background-color: #999;
 	color: transparent;
+
+	&.revealed {
+		background-color: #ddd;
+		color: #333;
+	}
+
+	&.flagged {
+		background-color: #aaa;
+		color: #f00;
+	}
 }

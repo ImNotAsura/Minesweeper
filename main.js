@@ -19,7 +19,7 @@ const handleCellClick = (row, col) => {
 		renderCell(cell);
 
 		if (cell.mine) {
-			//* Game Over (Reveal )
+			renderLosePage();
 		} else {
 			checkWin();
 		}
@@ -28,7 +28,7 @@ const handleCellClick = (row, col) => {
 
 const handleRightClick = (row, col) => {
 	const cell = minefield[row][col];
-	console.log(row, col);
+	cell.flagged = true;
 	renderCell(cell);
 };
 
@@ -62,15 +62,29 @@ const renderCell = (cell) => {
 		`.cell[data-row="${cell.row}"][data-col="${cell.col}"]`,
 	);
 	console.log(cellElement);
-	console.log(cell);
-	//* Reveal numbers
-	if (cell.flagged) {
+	console.log(cell.mine);
+
+	if (cell.revealed) {
+		cellElement.classList.add("revealed");
+		if (cell.mine) {
+			cellElement.innerHTML = "B";
+		} else {
+			cellElement.innerHTML = "O";
+		}
+	} else if (cell.flagged) {
+		cellElement.classList.add("flagged");
 		//* Place a flag
+		cellElement.innerHTML = "?";
 	}
 };
 
 const renderWinPage = () => {
 	console.log("You Win!");
+};
+
+const renderLosePage = () => {
+	//* Reveal all mine positions?
+	console.log("You lose");
 };
 
 /*----- game logic functions -----*/
