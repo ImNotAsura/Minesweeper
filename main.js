@@ -74,14 +74,13 @@ const renderCell = (cell) => {
 	const cellElement = document.querySelector(
 		`.cell[data-row="${cell.row}"][data-col="${cell.col}"]`,
 	);
-	console.log(cellElement);
 
 	if (cell.revealed) {
 		cellElement.classList.add("revealed");
 		if (cell.mine) {
 			cellElement.innerHTML = "B";
 		} else {
-			cellElement.innerHTML = cell.adjMines;
+			cellElement.innerHTML = cell.adjMines === 0 ? "" : cell.adjMines;
 		}
 	} else if (cell.flagged) {
 		cellElement.classList.add("flagged");
@@ -96,6 +95,15 @@ const renderWinPage = () => {
 
 const renderLosePage = () => {
 	//* Reveal all mine positions?
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			const cell = minefield[i][j];
+			if (cell.mine) {
+				cell.revealed = true;
+				renderCell(cell);
+			}
+		}
+	}
 	console.log("You lose");
 };
 
@@ -110,6 +118,8 @@ const initBoard = () => {
 				revealed: false,
 				flagged: false,
 				adjMines: 0,
+				row: i,
+				col: j,
 			};
 		}
 	}
