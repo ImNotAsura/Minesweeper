@@ -1,15 +1,15 @@
 /*----- constants -----*/
 //* Fixed constants for now, will allow for user input in the future
-const rows = 8;
-const cols = 8;
-const numMines = 10;
 
 /*----- state variables -----*/
 let minefield = [];
+let rows = 8;
+let cols = 8;
+let numMines = 10;
 
 /*----- cached elements -----*/
 const board = document.querySelector("#board");
-
+const settingsForm = document.querySelector("#settings-form");
 /*----- event listeners -----*/
 const handleCellClick = (row, col) => {
 	const cell = minefield[row][col];
@@ -203,5 +203,19 @@ function init() {
 	initBoard();
 	renderBoard();
 }
+
+// settingsForm.addEventListener("submit", (event) => {
+// 	event.preventDefault();
+
+// 	const startScreen = document.querySelector("#start-screen");
+// 	const gameScreen = document.querySelector("#game-screen");
+// 	const form = event.target;
+// 	console.log(form);
+// 	const difficulty = form.difficulty.value;
+// 	console.log(difficulty);
+
+// 	startScreen.style.display = "none";
+// 	gameScreen.style.display = "block";
+// });
 
 init();
