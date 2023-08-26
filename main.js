@@ -62,7 +62,7 @@ const handleRightClick = (row, col) => {
 	const cell = minefield[row][col];
 
 	if (cell.revealed) {
-		return;
+		floodFill(row, col);
 	}
 
 	if (cell.flagged) {
@@ -72,6 +72,7 @@ const handleRightClick = (row, col) => {
 	}
 
 	renderCell(cell);
+	checkWin();
 };
 
 /*----- render functions -----*/
@@ -202,6 +203,10 @@ const floodFill = (row, col) => {
 				if (!cell.revealed && !cell.flagged) {
 					cell.revealed = true;
 					renderCell(cell);
+					if (cell.mine) {
+						renderLosePage();
+						break;
+					}
 					if (cell.adjMines === 0) {
 						floodFill(i, j);
 					}
