@@ -1,15 +1,44 @@
 /*----- constants -----*/
-//* Fixed constants for now, will allow for user input in the future
 
 /*----- state variables -----*/
+
 let minefield = [];
-let rows = 8;
-let cols = 8;
-let numMines = 10;
+let rows = 0;
+let cols = 0;
+let numMines = 0;
+
+document
+	.getElementById("settings-form")
+	.addEventListener("submit", function (event) {
+		event.preventDefault();
+
+		const form = event.target;
+		const difficulty = form.difficulty.value;
+
+		if (difficulty === "custom") {
+			rows = Number(form.rows.value);
+			cols = Number(form.cols.value);
+			numMines = Number(form.numMines.value);
+		} else if (difficulty === "easy") {
+			rows = 9;
+			cols = 9;
+			numMines = 10;
+		} else if (difficulty === "medium") {
+			rows = 14;
+			cols = 14;
+			numMines = 30;
+		} else if (difficulty === "hard") {
+			rows = 19;
+			cols = 19;
+			numMines = 60;
+		}
+
+		init(); // Initialize the game board
+	});
 
 /*----- cached elements -----*/
 const board = document.querySelector("#board");
-const settingsForm = document.querySelector("#settings-form");
+
 /*----- event listeners -----*/
 const handleCellClick = (row, col) => {
 	const cell = minefield[row][col];
@@ -48,6 +77,8 @@ const handleRightClick = (row, col) => {
 /*----- render functions -----*/
 const renderBoard = () => {
 	board.innerHTML = "";
+	board.style.setProperty("--rows", rows);
+	board.style.setProperty("--cols", cols);
 
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
@@ -203,19 +234,3 @@ function init() {
 	initBoard();
 	renderBoard();
 }
-
-// settingsForm.addEventListener("submit", (event) => {
-// 	event.preventDefault();
-
-// 	const startScreen = document.querySelector("#start-screen");
-// 	const gameScreen = document.querySelector("#game-screen");
-// 	const form = event.target;
-// 	console.log(form);
-// 	const difficulty = form.difficulty.value;
-// 	console.log(difficulty);
-
-// 	startScreen.style.display = "none";
-// 	gameScreen.style.display = "block";
-// });
-
-init();

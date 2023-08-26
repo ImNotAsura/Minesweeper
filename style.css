@@ -2,9 +2,17 @@
 	box-sizing: border-box;
 }
 
+#board-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
 #board {
 	display: grid;
-	grid-template-columns: repeat(8, 40px);
+	grid-template-columns: repeat(var(--cols), 40px);
+	grid-template-rows: repeat(var(--rows), 40px);
 	grid-gap: 2px;
 	border: 2px solid #333;
 	margin: 0 auto;
