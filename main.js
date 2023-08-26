@@ -65,14 +65,11 @@ const handleRightClick = (row, col) => {
 		floodFill(row, col);
 	}
 
-	if (cell.flagged) {
-		cell.flagged = false;
-	} else {
-		cell.flagged = true;
-	}
+	cell.flagged = !cell.flagged;
 
 	renderCell(cell);
 	checkWin();
+	console.log(cell);
 };
 
 /*----- render functions -----*/
@@ -106,6 +103,8 @@ const renderCell = (cell) => {
 	const cellElement = document.querySelector(
 		`.cell[data-row="${cell.row}"][data-col="${cell.col}"]`,
 	);
+
+	cellElement.classList.remove("revealed", "flagged");
 
 	if (cell.revealed) {
 		cellElement.classList.add("revealed");
