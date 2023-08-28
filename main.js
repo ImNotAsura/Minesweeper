@@ -6,6 +6,7 @@ let minefield = [];
 let rows = 0;
 let cols = 0;
 let numMines = 0;
+// let gameState = "";
 
 document
 	.getElementById("settings-form")
@@ -38,6 +39,7 @@ document
 
 /*----- cached elements -----*/
 const board = document.querySelector("#board");
+const endScreen = document.querySelector("#end-screen");
 
 /*----- event listeners -----*/
 const handleCellClick = (row, col) => {
@@ -121,6 +123,9 @@ const renderCell = (cell) => {
 };
 
 const renderWinPage = () => {
+	const winGame = document.querySelector("#win-game");
+	winGame.innerHTML = "WIN";
+	endScreen.style.display = "block";
 	console.log("You Win!");
 };
 
@@ -135,7 +140,12 @@ const renderLosePage = () => {
 			}
 		}
 	}
+
+	const loseGame = document.querySelector("#lose-game");
+	loseGame.innerHTML = "LOSE";
+	endScreen.style.display = "block";
 	console.log("You lose");
+	// gameState = "lose";
 };
 
 /*----- game logic functions -----*/
@@ -231,6 +241,7 @@ const checkWin = () => {
 
 	if (allNonMinesRevealed) {
 		renderWinPage();
+		// gameState = "win";
 	}
 };
 
