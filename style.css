@@ -6,11 +6,25 @@
 	position: relative;
 }
 
+#header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px;
+}
+
+#game-screen {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 #board-container {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100vh;
+	height: 100%;
+	margin-top: 10px;
 }
 
 #board {
