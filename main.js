@@ -63,9 +63,9 @@ const handleRightClick = (row, col) => {
 
 	if (cell.revealed) {
 		floodFill(row, col);
+	} else {
+		cell.flagged = !cell.flagged;
 	}
-
-	cell.flagged = !cell.flagged;
 
 	renderCell(cell);
 	checkWin();
@@ -237,4 +237,10 @@ const checkWin = () => {
 function init() {
 	initBoard();
 	renderBoard();
+
+	const startScreen = document.querySelector("#start-screen");
+	const gameScreen = document.querySelector("#game-screen");
+
+	startScreen.style.display = "none";
+	gameScreen.style.display = "block";
 }
