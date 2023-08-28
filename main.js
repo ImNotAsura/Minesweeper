@@ -9,23 +9,28 @@ let numMines = 0;
 let bombsLeft = 0;
 // let gameState = "";
 
-document.getElementById("difficulty").addEventListener("change", (event) => {
-	const selectedDifficulty = event.target.value;
-	const { rows, cols, numMines } = getDifficultyValues(selectedDifficulty);
-	console.log(rows, cols, numMines);
-	renderForm(rows, cols, numMines);
-});
-
-document.getElementById("settings-form").addEventListener("submit", (event) => {
-	handleFormSubmit(event);
-});
-
 /*----- cached elements -----*/
 const board = document.querySelector("#board");
 const endScreen = document.querySelector("#end-screen");
 const bombCounter = document.querySelector("#bombs-count");
 
 /*----- event listeners -----*/
+document.getElementById("difficulty").addEventListener("change", (event) => {
+	handleDifficultyChange(event);
+});
+
+document.getElementById("settings-form").addEventListener("submit", (event) => {
+	handleFormSubmit(event);
+});
+
+/*----- event handlers -----*/
+const handleDifficultyChange = (event) => {
+	const selectedDifficulty = event.target.value;
+	//* Object destructuring - To grab the values of the following properties
+	const { rows, cols, numMines } = getDifficultyValues(selectedDifficulty);
+	renderForm(rows, cols, numMines);
+};
+
 const handleFormSubmit = (event) => {
 	event.preventDefault();
 
