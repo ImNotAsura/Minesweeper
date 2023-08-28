@@ -6,6 +6,7 @@ let minefield = [];
 let rows = 0;
 let cols = 0;
 let numMines = 0;
+let bombsLeft = 0;
 // let gameState = "";
 
 document
@@ -40,6 +41,7 @@ document
 /*----- cached elements -----*/
 const board = document.querySelector("#board");
 const endScreen = document.querySelector("#end-screen");
+const bombCounter = document.querySelector("#bombs-count");
 
 /*----- event listeners -----*/
 const handleCellClick = (row, col) => {
@@ -67,6 +69,14 @@ const handleRightClick = (row, col) => {
 		floodFill(row, col);
 	} else {
 		cell.flagged = !cell.flagged;
+
+		if (cell.flagged) {
+			bombsLeft--;
+		} else {
+			bombsLeft++;
+		}
+
+		bombCounter.textContent = bombsLeft;
 	}
 
 	renderCell(cell);
@@ -79,6 +89,8 @@ const renderBoard = () => {
 	board.innerHTML = "";
 	board.style.setProperty("--rows", rows);
 	board.style.setProperty("--cols", cols);
+	bombsLeft = numMines;
+	bombCounter.textContent = bombsLeft;
 
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
@@ -124,9 +136,8 @@ const renderCell = (cell) => {
 
 const renderWinPage = () => {
 	const winGame = document.querySelector("#win-game");
-	winGame.innerHTML = "WIN";
-	endScreen.style.display = "block";
-	console.log("You Win!");
+	winGame.innerHTML = "GAME OVER. YOU WIN";
+	endScreen.style.display = "flex";
 };
 
 const renderLosePage = () => {
@@ -142,9 +153,9 @@ const renderLosePage = () => {
 	}
 
 	const loseGame = document.querySelector("#lose-game");
-	loseGame.innerHTML = "LOSE";
-	endScreen.style.display = "block";
-	console.log("You lose");
+	loseGame.innerHTML = "GAME OVER. YOU LOSE";
+	endScreen.style.display = "flex";
+
 	// gameState = "lose";
 };
 

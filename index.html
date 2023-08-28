@@ -9,54 +9,58 @@
 		<script type="module" src="main.js" defer></script>
 	</head>
 	<body>
-		<div id="start-screen">
-			<form id="settings-form">
-				<label for="difficulty">Difficulty:</label>
-				<select id="difficulty" name="difficulty">
-					<option value="easy">Easy</option>
-					<option value="medium">Medium</option>
-					<option value="hard">Hard</option>
-					<option selected value="custom">Custom</option>
-				</select>
-				<br /><br />
+		<div id="container">
+			<div id="start-screen">
+				<form id="settings-form">
+					<label for="difficulty">Difficulty:</label>
+					<select id="difficulty" name="difficulty">
+						<option value="easy">Easy</option>
+						<option value="medium">Medium</option>
+						<option value="hard">Hard</option>
+						<option selected value="custom">Custom</option>
+					</select>
+					<br /><br />
 
-				<label for="rows">Rows:</label>
-				<input
-					type="number"
-					id="rows"
-					name="rows"
-					value="0"
-					required /><br /><br />
+					<label for="rows">Rows:</label>
+					<input
+						type="number"
+						id="rows"
+						name="rows"
+						value="0"
+						required /><br /><br />
 
-				<label for="cols">Columns:</label>
-				<input
-					type="number"
-					id="cols"
-					name="cols"
-					value="0"
-					required /><br /><br />
+					<label for="cols">Columns:</label>
+					<input
+						type="number"
+						id="cols"
+						name="cols"
+						value="0"
+						required /><br /><br />
 
-				<label for="numMines">Number of Mines:</label>
-				<input
-					type="number"
-					id="numMines"
-					name="numMines"
-					value="0"
-					required /><br /><br />
+					<label for="numMines">Number of Mines:</label>
+					<input
+						type="number"
+						id="numMines"
+						name="numMines"
+						value="0"
+						required /><br /><br />
 
-				<button type="submit">Start Game</button>
-			</form>
-		</div>
-		<!-- <button id="start-button">Init Game</button> -->
-		<div id="game-screen" style="display: none">
-			<div id="board-container">
-				<div id="board"></div>
+					<button type="submit">Start Game</button>
+				</form>
 			</div>
-		</div>
+			<!-- <button id="start-button">Init Game</button> -->
+			<div id="game-screen" style="display: none">
+				<div id="board-container">
+					<div id="bombs-left">Bombs Left: <span id="bombs-count"></span></div>
+					<div></div>
+					<div id="board"></div>
+				</div>
+			</div>
 
-		<div id="end-screen" style="display: none">
-			<div id="win-game"></div>
-			<div id="lose-game"></div>
+			<div id="end-screen" style="display: none">
+				<div id="win-game"></div>
+				<div id="lose-game"></div>
+			</div>
 		</div>
 	</body>
 </html>
