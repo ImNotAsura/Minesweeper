@@ -9,43 +9,16 @@ let numMines = 0;
 let bombsLeft = 0;
 // let gameState = "";
 
-document.getElementById("difficulty").addEventListener("change", function () {
-	const selectedDifficulty = this.value;
-	const rowsInput = document.getElementById("rows");
-	const colsInput = document.getElementById("cols");
-	const numMinesInput = document.getElementById("numMines");
-
-	if (selectedDifficulty === "easy") {
-		rowsInput.value = "9";
-		colsInput.value = "9";
-		numMinesInput.value = "10";
-	} else if (selectedDifficulty === "medium") {
-		rowsInput.value = "14";
-		colsInput.value = "14";
-		numMinesInput.value = "30";
-	} else if (selectedDifficulty === "hard") {
-		rowsInput.value = "19";
-		colsInput.value = "19";
-		numMinesInput.value = "60";
-	} else if (selectedDifficulty === "custom") {
-		rowsInput.value = "0";
-		colsInput.value = "0";
-		numMinesInput.value = "0";
-	}
+document.getElementById("difficulty").addEventListener("change", (event) => {
+	const selectedDifficulty = event.target.value;
+	const { rows, cols, numMines } = getDifficultyValues(selectedDifficulty);
+	console.log(rows, cols, numMines);
+	renderForm(rows, cols, numMines);
 });
 
-document
-	.getElementById("settings-form")
-	.addEventListener("submit", function (event) {
-		event.preventDefault();
-
-		const form = event.target;
-		rows = form.rows.value;
-		cols = form.cols.value;
-		numMines = form.numMines.value;
-
-		init();
-	});
+document.getElementById("settings-form").addEventListener("submit", (event) => {
+	handleFormSubmit(event);
+});
 
 /*----- cached elements -----*/
 const board = document.querySelector("#board");
@@ -53,21 +26,34 @@ const endScreen = document.querySelector("#end-screen");
 const bombCounter = document.querySelector("#bombs-count");
 
 /*----- event listeners -----*/
+const handleFormSubmit = (event) => {
+	event.preventDefault();
+
+	const form = event.target;
+	rows = form.rows.value;
+	cols = form.cols.value;
+	numMines = form.numMines.value;
+
+	init();
+};
+
 const handleCellClick = (row, col) => {
 	const cell = minefield[row][col];
 
-	if (!cell.revealed && !cell.flagged) {
-		cell.revealed = true;
-		renderCell(cell);
+	if (cell.revealed && cell.flagged) {
+		return;
+	}
 
-		if (cell.mine) {
-			renderLosePage();
-		} else {
-			if (cell.adjMines === 0) {
-				floodFill(row, col);
-			}
-			checkWin();
+	cell.revealed = true;
+	renderCell(cell);
+
+	if (cell.mine) {
+		renderLosePage();
+	} else {
+		if (cell.adjMines === 0) {
+			floodFill(row, col);
 		}
+		checkWin();
 	}
 };
 
@@ -90,10 +76,19 @@ const handleRightClick = (row, col) => {
 
 	renderCell(cell);
 	checkWin();
-	console.log(cell);
 };
 
 /*----- render functions -----*/
+const renderForm = (rows, cols, numMines) => {
+	const rowsInput = document.getElementById("rows");
+	const colsInput = document.getElementById("cols");
+	const numMinesInput = document.getElementById("numMines");
+
+	rowsInput.value = rows;
+	colsInput.value = cols;
+	numMinesInput.value = numMines;
+};
+
 const renderBoard = () => {
 	board.innerHTML = "";
 	board.style.setProperty("--rows", rows);
@@ -169,6 +164,17 @@ const renderLosePage = () => {
 };
 
 /*----- game logic functions -----*/
+const getDifficultyValues = (selectedDifficulty) => {
+	const difficulty = {
+		easy: { rows: 9, cols: 9, numMines: 10 },
+		medium: { rows: 14, cols: 14, numMines: 30 },
+		hard: { rows: 19, cols: 19, numMines: 60 },
+		custom: { rows: 0, cols: 0, numMines: 0 },
+	};
+
+	return difficulty[selectedDifficulty];
+};
+
 const initBoard = () => {
 	//* Initialise the minefield, place mines & calculateAdjMines
 	for (let i = 0; i < rows; i++) {
