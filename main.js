@@ -9,33 +9,42 @@ let numMines = 0;
 let bombsLeft = 0;
 // let gameState = "";
 
+document.getElementById("difficulty").addEventListener("change", function () {
+	const selectedDifficulty = this.value;
+	const rowsInput = document.getElementById("rows");
+	const colsInput = document.getElementById("cols");
+	const numMinesInput = document.getElementById("numMines");
+
+	if (selectedDifficulty === "easy") {
+		rowsInput.value = "9";
+		colsInput.value = "9";
+		numMinesInput.value = "10";
+	} else if (selectedDifficulty === "medium") {
+		rowsInput.value = "14";
+		colsInput.value = "14";
+		numMinesInput.value = "30";
+	} else if (selectedDifficulty === "hard") {
+		rowsInput.value = "19";
+		colsInput.value = "19";
+		numMinesInput.value = "60";
+	} else if (selectedDifficulty === "custom") {
+		rowsInput.value = "0";
+		colsInput.value = "0";
+		numMinesInput.value = "0";
+	}
+});
+
 document
 	.getElementById("settings-form")
 	.addEventListener("submit", function (event) {
 		event.preventDefault();
 
 		const form = event.target;
-		const difficulty = form.difficulty.value;
+		rows = form.rows.value;
+		cols = form.cols.value;
+		numMines = form.numMines.value;
 
-		if (difficulty === "custom") {
-			rows = Number(form.rows.value);
-			cols = Number(form.cols.value);
-			numMines = Number(form.numMines.value);
-		} else if (difficulty === "easy") {
-			rows = 9;
-			cols = 9;
-			numMines = 10;
-		} else if (difficulty === "medium") {
-			rows = 14;
-			cols = 14;
-			numMines = 30;
-		} else if (difficulty === "hard") {
-			rows = 19;
-			cols = 19;
-			numMines = 60;
-		}
-
-		init(); // Initialize the game board
+		init();
 	});
 
 /*----- cached elements -----*/
