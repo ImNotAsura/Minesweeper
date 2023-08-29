@@ -1,5 +1,7 @@
 /*----- constants -----*/
 
+import { startTimer, stopTimer } from "./timer";
+
 /*----- state variables -----*/
 
 let minefield = [];
@@ -147,6 +149,7 @@ const renderWinPage = () => {
 	const winGame = document.querySelector("#win-game");
 	winGame.innerHTML = "GAME OVER. YOU WIN";
 	endScreen.style.display = "flex";
+	stopTimer();
 };
 
 const renderLosePage = () => {
@@ -164,11 +167,12 @@ const renderLosePage = () => {
 	const loseGame = document.querySelector("#lose-game");
 	loseGame.innerHTML = "GAME OVER. YOU LOSE";
 	endScreen.style.display = "flex";
+	stopTimer();
 
 	// gameState = "lose";
 };
 
-/*----- game logic functions -----*/
+/*----- helper functions -----*/
 const getDifficultyValues = (selectedDifficulty) => {
 	const difficulty = {
 		easy: { rows: 9, cols: 9, numMines: 10 },
@@ -180,6 +184,19 @@ const getDifficultyValues = (selectedDifficulty) => {
 	return difficulty[selectedDifficulty];
 };
 
+const countAdjMines = (row, col) => {
+	let count = 0;
+	for (let i = Math.max(0, row - 1); i <= Math.min(row + 1, rows - 1); i++) {
+		for (let j = Math.max(0, col - 1); j <= Math.min(col + 1, cols - 1); j++) {
+			if (minefield[i][j].mine) {
+				count++;
+			}
+		}
+	}
+	return count;
+};
+
+/*----- game logic functions -----*/
 const initBoard = () => {
 	//* Initialise the minefield, place mines & calculateAdjMines
 	for (let i = 0; i < rows; i++) {
@@ -221,18 +238,6 @@ const calculateAdjMines = () => {
 			}
 		}
 	}
-};
-
-const countAdjMines = (row, col) => {
-	let count = 0;
-	for (let i = Math.max(0, row - 1); i <= Math.min(row + 1, rows - 1); i++) {
-		for (let j = Math.max(0, col - 1); j <= Math.min(col + 1, cols - 1); j++) {
-			if (minefield[i][j].mine) {
-				count++;
-			}
-		}
-	}
-	return count;
 };
 
 const floodFill = (row, col) => {
@@ -279,6 +284,7 @@ const checkWin = () => {
 function init() {
 	initBoard();
 	renderBoard();
+	startTimer();
 
 	const startScreen = document.querySelector("#start-screen");
 	const gameScreen = document.querySelector("#game-screen");
