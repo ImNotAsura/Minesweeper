@@ -3,6 +3,7 @@ let minutes = 0;
 let timerInterval;
 
 const startTimer = () => {
+	renderTimer();
 	timerInterval = setInterval(updateTimer, 1000);
 };
 

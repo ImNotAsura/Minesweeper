@@ -1,6 +1,7 @@
 /*----- constants -----*/
 
-import { startTimer, stopTimer } from "./timer";
+import { renderInit } from "./modules/form";
+import { startTimer, stopTimer } from "./modules/timer";
 
 /*----- state variables -----*/
 
@@ -47,7 +48,7 @@ const handleFormSubmit = (event) => {
 const handleCellClick = (row, col) => {
 	const cell = minefield[row][col];
 
-	if (cell.revealed && cell.flagged) {
+	if (cell.revealed || cell.flagged) {
 		return;
 	}
 
@@ -86,6 +87,7 @@ const handleRightClick = (row, col) => {
 };
 
 /*----- render functions -----*/
+
 const renderForm = (rows, cols, numMines) => {
 	const rowsInput = document.getElementById("rows");
 	const colsInput = document.getElementById("cols");
@@ -250,7 +252,7 @@ const floodFill = (row, col) => {
 					renderCell(cell);
 					if (cell.mine) {
 						renderLosePage();
-						break;
+						return;
 					}
 					if (cell.adjMines === 0) {
 						floodFill(i, j);
@@ -292,3 +294,5 @@ function init() {
 	startScreen.style.display = "none";
 	gameScreen.style.display = "block";
 }
+
+renderInit();
