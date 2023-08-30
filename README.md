@@ -1,8 +1,8 @@
 # Minesweeper Game
 
-![Minesweeper Preview](./public/images/mediumDifficulty.png)
-![Win Preview](./public/images/winScreen.png)
-![Lose Pewview](./public/images/loseScreen.png)
+<img src="./public/images/mediumDifficulty.png" alt="Minesweeper Preview" width="300" height="300">
+<img src="./public/images/winScreen.png" alt="Win Preview" width="300" height="300">
+<img src="./public/images/loseScreen.png" alt="Lose Preview" width="300" height="300">
 
 A classic Minesweeper game implemented in JavaScript, HTML, and CSS.
 
@@ -30,8 +30,8 @@ This project is a web-based implementation of the popular Minesweeper game. It i
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your-username/minesweeper-game.git`
-2. Navigate to the project directory: `cd minesweeper-game`
+1. Clone the repository: `git clone https://github.com/marcusawd/Minesweeper.git`
+2. Navigate to the project directory: `cd Minesweeper`
 
 ## Usage
 
