@@ -4,7 +4,7 @@ const renderLabels = () => {
 	const inputFields = [
 		{ label: "Rows:", id: "rows", value: "9" },
 		{ label: "Columns:", id: "cols", value: "9" },
-		{ label: "Number of Mines:", id: "numMines", value: "10" },
+		{ label: "Number of Mines:", id: "numMines", value: "12" },
 	];
 
 	for (const field of inputFields) {

@@ -1,7 +1,11 @@
 /*----- constants -----*/
 
 import { renderInit } from "./modules/form";
-import { startTimer, stopTimer } from "./modules/timer";
+import {
+	getElapsedTimeInSeconds,
+	startTimer,
+	stopTimer,
+} from "./modules/timer";
 
 /*----- state variables -----*/
 
@@ -10,6 +14,7 @@ let rows = 0;
 let cols = 0;
 let numMines = 0;
 let bombsLeft = 0;
+let selectedDifficulty;
 // let gameState = "";
 
 /*----- cached elements -----*/
@@ -28,7 +33,8 @@ document.getElementById("settings-form").addEventListener("submit", (event) => {
 
 /*----- event handlers -----*/
 const handleDifficultyChange = (event) => {
-	const selectedDifficulty = event.target.value;
+	selectedDifficulty = event.target.value;
+	console.log(selectedDifficulty);
 	//* Object destructuring - To grab the values of the following properties
 	const { rows, cols, numMines } = getDifficultyValues(selectedDifficulty);
 	renderForm(rows, cols, numMines);
@@ -151,7 +157,9 @@ const renderWinPage = () => {
 	const winGame = document.querySelector("#win-game");
 	winGame.innerHTML = "GAME OVER. YOU WIN";
 	endScreen.style.display = "flex";
+
 	stopTimer();
+	storeTimerInLocalStorage(selectedDifficulty);
 };
 
 const renderLosePage = () => {
@@ -170,6 +178,7 @@ const renderLosePage = () => {
 	loseGame.innerHTML = "GAME OVER. YOU LOSE";
 	endScreen.style.display = "flex";
 	stopTimer();
+	storeTimerInLocalStorage(selectedDifficulty);
 
 	// gameState = "lose";
 };
@@ -177,13 +186,19 @@ const renderLosePage = () => {
 /*----- helper functions -----*/
 const getDifficultyValues = (selectedDifficulty) => {
 	const difficulty = {
-		easy: { rows: 9, cols: 9, numMines: 10 },
-		medium: { rows: 14, cols: 14, numMines: 30 },
-		hard: { rows: 19, cols: 19, numMines: 60 },
+		easy: { rows: 9, cols: 9, numMines: 12 },
+		medium: { rows: 13, cols: 13, numMines: 30 },
+		hard: { rows: 17, cols: 17, numMines: 60 },
 		custom: { rows: 0, cols: 0, numMines: 0 },
 	};
 
 	return difficulty[selectedDifficulty];
+};
+
+const storeTimerInLocalStorage = (difficulty) => {
+	const elapsedSeconds = getElapsedTimeInSeconds();
+	localStorage.setItem(difficulty, elapsedSeconds);
+	console.log(difficulty, elapsedSeconds);
 };
 
 const countAdjMines = (row, col) => {

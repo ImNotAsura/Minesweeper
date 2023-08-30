@@ -1,5 +1,4 @@
-let seconds = 0;
-let minutes = 0;
+let totalSeconds = 0;
 let timerInterval;
 
 const startTimer = () => {
@@ -12,18 +11,24 @@ const stopTimer = () => {
 };
 
 const updateTimer = () => {
-	seconds++;
-	if (seconds >= 60) {
-		seconds = 0;
-		minutes++;
-	}
+	totalSeconds++;
 	renderTimer();
 };
 
 const renderTimer = () => {
 	const timerElement = document.querySelector("#timer");
-	const formattedTime = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+	const formattedTime = formatTime(totalSeconds);
 	timerElement.textContent = formattedTime;
 };
 
-export { startTimer, stopTimer };
+const formatTime = (seconds) => {
+	const minutes = Math.floor(seconds / 60);
+	const remainingSeconds = seconds % 60;
+	return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+};
+
+const getElapsedTimeInSeconds = () => {
+	return totalSeconds;
+};
+
+export { startTimer, stopTimer, getElapsedTimeInSeconds };
