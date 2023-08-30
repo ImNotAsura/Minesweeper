@@ -1,10 +1,12 @@
 # Minesweeper Game
 
-<img src="./public/images/mediumDifficulty.png" alt="Minesweeper Preview" width="300" height="300" style="display: inline; margin-right: 20px;">
-<img src="./public/images/winScreen.png" alt="Win Preview" width="300" height="300" style="display: inline; margin-right: 20px;">
-<img src="./public/images/loseScreen.png" alt="Lose Preview" width="300" height="300" style="display: inline;">
-
 A classic Minesweeper game implemented in JavaScript, HTML, and CSS.
+
+<div style="text-align: center;">
+  <img src="./public/images/mediumDifficulty.png" alt="Minesweeper Preview" width="300" height="300" style="display: inline; ">
+  <img src="./public/images/winScreen.png" alt="Win Preview" width="300" height="300" style="display: inline; ">
+  <img src="./public/images/loseScreen.png" alt="Lose Preview" width="300" height="300" style="display: inline;">
+</div>
 
 ## Table of Contents
 
