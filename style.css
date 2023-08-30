@@ -72,5 +72,12 @@
 	justify-content: center;
 	align-items: center;
 	backdrop-filter: blur(1px);
-	background-color: rgba(141, 142, 143, 0.8);
+
+	&.win {
+		background-color: rgba(162, 210, 74, 0.8);
+	}
+
+	&.lose {
+		background-color: rgba(191, 98, 98, 0.8);
+	}
 }

@@ -5,6 +5,7 @@ import {
 	getElapsedTimeInSeconds,
 	startTimer,
 	stopTimer,
+	formatTime,
 } from "./modules/timer";
 
 /*----- state variables -----*/
@@ -21,6 +22,8 @@ let selectedDifficulty;
 const board = document.querySelector("#board");
 const endScreen = document.querySelector("#end-screen");
 const bombCounter = document.querySelector("#bombs-count");
+const startScreen = document.querySelector("#start-screen");
+const gameScreen = document.querySelector("#game-screen");
 
 /*----- event listeners -----*/
 document.getElementById("difficulty").addEventListener("change", (event) => {
@@ -62,7 +65,7 @@ const handleCellClick = (row, col) => {
 	renderCell(cell);
 
 	if (cell.mine) {
-		renderLosePage();
+		renderEndPage(false);
 	} else {
 		if (cell.adjMines === 0) {
 			floodFill(row, col);
@@ -153,34 +156,73 @@ const renderCell = (cell) => {
 	}
 };
 
-const renderWinPage = () => {
-	const winGame = document.querySelector("#win-game");
-	winGame.innerHTML = "GAME OVER. YOU WIN";
-	endScreen.style.display = "flex";
-
+const renderEndPage = (isWin) => {
 	stopTimer();
-	storeTimerInLocalStorage(selectedDifficulty);
-};
-
-const renderLosePage = () => {
-	//* Reveal all mine positions?
-	for (let i = 0; i < rows; i++) {
-		for (let j = 0; j < cols; j++) {
-			const cell = minefield[i][j];
-			if (cell.mine) {
-				cell.revealed = true;
-				renderCell(cell);
+	const elapsedTime = getElapsedTimeInSeconds();
+	if (isWin) {
+		storeTimerInLocalStorage(selectedDifficulty, elapsedTime);
+	} else {
+		for (let i = 0; i < rows; i++) {
+			for (let j = 0; j < cols; j++) {
+				const cell = minefield[i][j];
+				if (cell.mine) {
+					cell.revealed = true;
+					renderCell(cell);
+				}
 			}
 		}
 	}
+	const fastestTime = localStorage.getItem(selectedDifficulty);
 
-	const loseGame = document.querySelector("#lose-game");
-	loseGame.innerHTML = "GAME OVER. YOU LOSE";
+	const endGame = document.querySelector(isWin ? "#win-game" : "#lose-game");
+	endGame.innerHTML = "";
+
+	let endGameContent = `
+    <div>
+      <p>GAME OVER. YOU ${isWin ? "WIN" : "LOSE"}</p>
+  `;
+
+	if (isWin) {
+		endGameContent += `
+      <p>Time Taken: ${formatTime(elapsedTime)}</p>
+      <p>Fastest Time: ${formatTime(parseFloat(fastestTime) || elapsedTime)}</p>
+    `;
+	}
+
+	endGameContent += `
+    </div>
+    <div>
+      <button id="reset-highscore-button">Reset Highscore</button>
+      <button id="restart-button">Restart</button>
+      <button id="home-button">Home</button>
+    </div>
+  `;
+
+	endGame.innerHTML = endGameContent;
+
+	const resetHighscoreButton = document.getElementById(
+		"reset-highscore-button",
+	);
+	resetHighscoreButton.addEventListener("click", () => {
+		localStorage.removeItem(selectedDifficulty);
+	});
+
+	const restartButton = document.getElementById("restart-button");
+	restartButton.addEventListener("click", () => {
+		// Restart logic
+		endGame.innerHTML = "";
+		endScreen.style.display = "none";
+		endScreen.classList.remove("win", "lose");
+		init();
+	});
+
+	const homeButton = document.getElementById("home-button");
+	homeButton.addEventListener("click", () => {
+		location.reload();
+	});
+
 	endScreen.style.display = "flex";
-	stopTimer();
-	storeTimerInLocalStorage(selectedDifficulty);
-
-	// gameState = "lose";
+	endScreen.classList.add(isWin ? "win" : "lose");
 };
 
 /*----- helper functions -----*/
@@ -195,10 +237,11 @@ const getDifficultyValues = (selectedDifficulty) => {
 	return difficulty[selectedDifficulty];
 };
 
-const storeTimerInLocalStorage = (difficulty) => {
-	const elapsedSeconds = getElapsedTimeInSeconds();
-	localStorage.setItem(difficulty, elapsedSeconds);
-	console.log(difficulty, elapsedSeconds);
+const storeTimerInLocalStorage = (difficulty, elapsedTimeInSeconds) => {
+	const storedTime = localStorage.getItem(difficulty);
+	if (!storedTime || elapsedTimeInSeconds < parseFloat(storedTime)) {
+		localStorage.setItem(difficulty, elapsedTimeInSeconds.toString());
+	}
 };
 
 const countAdjMines = (row, col) => {
@@ -293,7 +336,7 @@ const checkWin = () => {
 	}
 
 	if (allNonMinesRevealed) {
-		renderWinPage();
+		renderEndPage(true);
 		// gameState = "win";
 	}
 };
@@ -302,9 +345,6 @@ function init() {
 	initBoard();
 	renderBoard();
 	startTimer();
-
-	const startScreen = document.querySelector("#start-screen");
-	const gameScreen = document.querySelector("#game-screen");
 
 	startScreen.style.display = "none";
 	gameScreen.style.display = "block";
