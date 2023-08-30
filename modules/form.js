@@ -1,6 +1,8 @@
-import { init } from "./gameLogic";
+import { init } from "./gameRender";
 import { difficulty, gameBoard } from "./constants";
+import { formatTime } from "./timer";
 
+//* Render dropdown when choosing difficulty
 document.getElementById("difficulty").addEventListener("change", (event) => {
 	handleDifficultyChange(event);
 });
@@ -44,6 +46,11 @@ const renderLabels = () => {
 	startButton.setAttribute("type", "submit");
 	startButton.textContent = "Start Game";
 	dynamic.appendChild(startButton);
+
+	const fastestTimeSpan = document.createElement("span");
+	fastestTimeSpan.id = "fastest-time";
+	fastestTimeSpan.style.marginLeft = "10px";
+	dynamic.appendChild(fastestTimeSpan);
 };
 
 const renderForm = (selectedDifficultyValues) => {
@@ -54,8 +61,21 @@ const renderForm = (selectedDifficultyValues) => {
 	rowsInput.value = selectedDifficultyValues.rows;
 	colsInput.value = selectedDifficultyValues.cols;
 	numMinesInput.value = selectedDifficultyValues.numMines;
+
+	const fastestTimeParagraph = document.getElementById("fastest-time");
+	const selectedDifficulty = document.getElementById("difficulty").value;
+	const fastestTimeForDifficulty = localStorage.getItem(selectedDifficulty);
+
+	if (fastestTimeForDifficulty) {
+		fastestTimeParagraph.textContent = `Fastest Time: ${formatTime(
+			parseFloat(fastestTimeForDifficulty),
+		)}`;
+	} else {
+		fastestTimeParagraph.textContent = "No highscore yet!";
+	}
 };
 
+//* Submit Event - Game Starts
 document.getElementById("settings-form").addEventListener("submit", (event) => {
 	handleFormSubmit(event);
 });

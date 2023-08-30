@@ -28,8 +28,21 @@ const formatTime = (seconds) => {
 	return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
 };
 
+const storeTimerInLocalStorage = (difficulty, elapsedTimeInSeconds) => {
+	const storedTime = localStorage.getItem(difficulty);
+	if (!storedTime || elapsedTimeInSeconds < parseFloat(storedTime)) {
+		localStorage.setItem(difficulty, elapsedTimeInSeconds.toString());
+	}
+};
+
 const getElapsedTimeInSeconds = () => {
 	return totalSeconds;
 };
 
-export { startTimer, stopTimer, getElapsedTimeInSeconds, formatTime };
+export {
+	startTimer,
+	stopTimer,
+	getElapsedTimeInSeconds,
+	formatTime,
+	storeTimerInLocalStorage,
+};
