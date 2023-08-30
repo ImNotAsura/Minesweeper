@@ -7,10 +7,10 @@
 		<title>Minesweeper</title>
 		<link rel="stylesheet" href="style.css" />
 		<script type="module" src="./modules/constants.js" defer></script>
+		<script type="module" src="main.js" defer></script>
 		<script type="module" src="./modules/form.js" defer></script>
 		<script type="module" src="./modules/timer.js" defer></script>
 		<script type="module" src="./modules/gameLogic.js"></script>
-		<script type="module" src="main.js" defer></script>
 	</head>
 	<body>
 		<div id="container">
@@ -19,6 +19,7 @@
 					<label for="difficulty">Difficulty:</label>
 					<select id="difficulty" name="difficulty"></select>
 					<br /><br />
+					<div id="dynamic-content"></div>
 				</form>
 			</div>
 			<div id="game-screen" style="display: none">
