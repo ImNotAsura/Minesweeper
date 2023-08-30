@@ -1,353 +1,57 @@
-/*----- constants -----*/
+import { difficulty } from "./modules/constants";
 
-import { renderInit } from "./modules/form";
-import {
-	getElapsedTimeInSeconds,
-	startTimer,
-	stopTimer,
-	formatTime,
-} from "./modules/timer";
+const settingsForm = document.getElementById("settings-form");
 
-/*----- state variables -----*/
+const renderLabels = () => {
+	const inputFields = [
+		{ label: "Rows:", id: "rows", value: "9" },
+		{ label: "Columns:", id: "cols", value: "9" },
+		{ label: "Number of Mines:", id: "numMines", value: "12" },
+	];
 
-let minefield = [];
-let rows = 0;
-let cols = 0;
-let numMines = 0;
-let bombsLeft = 0;
-let selectedDifficulty;
-// let gameState = "";
+	for (const field of inputFields) {
+		const label = document.createElement("label");
+		label.setAttribute("for", field.id);
+		label.textContent = field.label + " ";
+		settingsForm.appendChild(label);
 
-/*----- cached elements -----*/
-const board = document.querySelector("#board");
-const endScreen = document.querySelector("#end-screen");
-const bombCounter = document.querySelector("#bombs-count");
-const startScreen = document.querySelector("#start-screen");
-const gameScreen = document.querySelector("#game-screen");
+		const input = document.createElement("input");
+		input.setAttribute("type", "number");
+		input.setAttribute("id", field.id);
+		input.setAttribute("name", field.id);
+		input.setAttribute("value", field.value);
+		input.setAttribute("required", "");
+		settingsForm.appendChild(input);
 
-/*----- event listeners -----*/
-document.getElementById("difficulty").addEventListener("change", (event) => {
-	handleDifficultyChange(event);
-});
-
-document.getElementById("settings-form").addEventListener("submit", (event) => {
-	handleFormSubmit(event);
-});
-
-/*----- event handlers -----*/
-const handleDifficultyChange = (event) => {
-	selectedDifficulty = event.target.value;
-	console.log(selectedDifficulty);
-	//* Object destructuring - To grab the values of the following properties
-	const { rows, cols, numMines } = getDifficultyValues(selectedDifficulty);
-	renderForm(rows, cols, numMines);
-};
-
-const handleFormSubmit = (event) => {
-	event.preventDefault();
-
-	const form = event.target;
-	rows = form.rows.value;
-	cols = form.cols.value;
-	numMines = form.numMines.value;
-
-	init();
-};
-
-const handleCellClick = (row, col) => {
-	const cell = minefield[row][col];
-
-	if (cell.revealed || cell.flagged) {
-		return;
-	}
-
-	cell.revealed = true;
-	renderCell(cell);
-
-	if (cell.mine) {
-		renderEndPage(false);
-	} else {
-		if (cell.adjMines === 0) {
-			floodFill(row, col);
-		}
-		checkWin();
+		settingsForm.appendChild(document.createElement("br"));
+		settingsForm.appendChild(document.createElement("br"));
 	}
 };
 
-const handleRightClick = (row, col) => {
-	const cell = minefield[row][col];
+const renderSelect = () => {
+	const difficultySelect = document.querySelector("#difficulty");
+	const difficulties = Object.keys(difficulty);
 
-	if (cell.revealed) {
-		floodFill(row, col);
-	} else {
-		cell.flagged = !cell.flagged;
-
-		if (cell.flagged) {
-			bombsLeft--;
-		} else {
-			bombsLeft++;
-		}
-
-		bombCounter.textContent = bombsLeft;
-	}
-
-	renderCell(cell);
-	checkWin();
-};
-
-/*----- render functions -----*/
-
-const renderForm = (rows, cols, numMines) => {
-	const rowsInput = document.getElementById("rows");
-	const colsInput = document.getElementById("cols");
-	const numMinesInput = document.getElementById("numMines");
-
-	rowsInput.value = rows;
-	colsInput.value = cols;
-	numMinesInput.value = numMines;
-};
-
-const renderBoard = () => {
-	board.innerHTML = "";
-	board.style.setProperty("--rows", rows);
-	board.style.setProperty("--cols", cols);
-	bombsLeft = numMines;
-	bombCounter.textContent = bombsLeft;
-
-	for (let i = 0; i < rows; i++) {
-		for (let j = 0; j < cols; j++) {
-			const cell = document.createElement("div");
-			cell.classList.add("cell");
-			cell.setAttribute("data-row", i);
-			cell.setAttribute("data-col", j);
-
-			cell.addEventListener("click", () => {
-				handleCellClick(i, j);
-			});
-
-			cell.addEventListener("contextmenu", (event) => {
-				event.preventDefault();
-				handleRightClick(i, j);
-			});
-
-			board.appendChild(cell);
-		}
-	}
-};
-
-const renderCell = (cell) => {
-	const cellElement = document.querySelector(
-		`.cell[data-row="${cell.row}"][data-col="${cell.col}"]`,
-	);
-
-	cellElement.classList.remove("revealed", "flagged");
-
-	if (cell.revealed) {
-		cellElement.classList.add("revealed");
-		if (cell.mine) {
-			cellElement.innerHTML = "B";
-		} else {
-			cellElement.innerHTML = cell.adjMines === 0 ? "" : cell.adjMines;
-		}
-	} else if (cell.flagged) {
-		cellElement.classList.add("flagged");
-		//* Place a flag
-		cellElement.innerHTML = "?";
-	}
-};
-
-const renderEndPage = (isWin) => {
-	stopTimer();
-	const elapsedTime = getElapsedTimeInSeconds();
-	if (isWin) {
-		storeTimerInLocalStorage(selectedDifficulty, elapsedTime);
-	} else {
-		for (let i = 0; i < rows; i++) {
-			for (let j = 0; j < cols; j++) {
-				const cell = minefield[i][j];
-				if (cell.mine) {
-					cell.revealed = true;
-					renderCell(cell);
-				}
-			}
-		}
-	}
-	const fastestTime = localStorage.getItem(selectedDifficulty);
-
-	const endGame = document.querySelector(isWin ? "#win-game" : "#lose-game");
-	endGame.innerHTML = "";
-
-	let endGameContent = `
-    <div>
-      <p>GAME OVER. YOU ${isWin ? "WIN" : "LOSE"}</p>
-  `;
-
-	if (isWin) {
-		endGameContent += `
-      <p>Time Taken: ${formatTime(elapsedTime)}</p>
-      <p>Fastest Time: ${formatTime(parseFloat(fastestTime) || elapsedTime)}</p>
-    `;
-	}
-
-	endGameContent += `
-    </div>
-    <div>
-      <button id="reset-highscore-button">Reset Highscore</button>
-      <button id="restart-button">Restart</button>
-      <button id="home-button">Home</button>
-    </div>
-  `;
-
-	endGame.innerHTML = endGameContent;
-
-	const resetHighscoreButton = document.getElementById(
-		"reset-highscore-button",
-	);
-	resetHighscoreButton.addEventListener("click", () => {
-		localStorage.removeItem(selectedDifficulty);
+	difficulties.forEach((difficulty) => {
+		const option = document.createElement("option");
+		option.value = difficulty;
+		option.textContent =
+			difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+		difficultySelect.appendChild(option);
 	});
-
-	const restartButton = document.getElementById("restart-button");
-	restartButton.addEventListener("click", () => {
-		// Restart logic
-		endGame.innerHTML = "";
-		endScreen.style.display = "none";
-		endScreen.classList.remove("win", "lose");
-		init();
-	});
-
-	const homeButton = document.getElementById("home-button");
-	homeButton.addEventListener("click", () => {
-		location.reload();
-	});
-
-	endScreen.style.display = "flex";
-	endScreen.classList.add(isWin ? "win" : "lose");
 };
 
-/*----- helper functions -----*/
-const getDifficultyValues = (selectedDifficulty) => {
-	const difficulty = {
-		easy: { rows: 9, cols: 9, numMines: 12 },
-		medium: { rows: 13, cols: 13, numMines: 30 },
-		hard: { rows: 17, cols: 17, numMines: 60 },
-		custom: { rows: 0, cols: 0, numMines: 0 },
-	};
-
-	return difficulty[selectedDifficulty];
+const renderStartButton = () => {
+	const startButton = document.createElement("button");
+	startButton.setAttribute("type", "submit");
+	startButton.textContent = "Start Game";
+	settingsForm.appendChild(startButton);
 };
 
-const storeTimerInLocalStorage = (difficulty, elapsedTimeInSeconds) => {
-	const storedTime = localStorage.getItem(difficulty);
-	if (!storedTime || elapsedTimeInSeconds < parseFloat(storedTime)) {
-		localStorage.setItem(difficulty, elapsedTimeInSeconds.toString());
-	}
-};
-
-const countAdjMines = (row, col) => {
-	let count = 0;
-	for (let i = Math.max(0, row - 1); i <= Math.min(row + 1, rows - 1); i++) {
-		for (let j = Math.max(0, col - 1); j <= Math.min(col + 1, cols - 1); j++) {
-			if (minefield[i][j].mine) {
-				count++;
-			}
-		}
-	}
-	return count;
-};
-
-/*----- game logic functions -----*/
-const initBoard = () => {
-	//* Initialise the minefield, place mines & calculateAdjMines
-	for (let i = 0; i < rows; i++) {
-		minefield[i] = [];
-		for (let j = 0; j < cols; j++) {
-			minefield[i][j] = {
-				mine: false,
-				revealed: false,
-				flagged: false,
-				adjMines: 0,
-				row: i,
-				col: j,
-			};
-		}
-	}
-	placeMines();
-	calculateAdjMines();
-	console.log(minefield);
-};
-
-const placeMines = () => {
-	let placedMines = 0;
-	while (placedMines < numMines) {
-		const row = Math.floor(Math.random() * rows);
-		const col = Math.floor(Math.random() * cols);
-		if (!minefield[row][col].mine) {
-			minefield[row][col].mine = true;
-			placedMines++;
-		}
-	}
-};
-
-const calculateAdjMines = () => {
-	for (let i = 0; i < rows; i++) {
-		for (let j = 0; j < cols; j++) {
-			const cell = minefield[i][j];
-			if (!cell.mine) {
-				cell.adjMines = countAdjMines(i, j);
-			}
-		}
-	}
-};
-
-const floodFill = (row, col) => {
-	for (let i = row - 1; i <= row + 1; i++) {
-		for (let j = col - 1; j <= col + 1; j++) {
-			if (i >= 0 && i < rows && j >= 0 && j < cols) {
-				const cell = minefield[i][j];
-				if (!cell.revealed && !cell.flagged) {
-					cell.revealed = true;
-					renderCell(cell);
-					if (cell.mine) {
-						renderLosePage();
-						return;
-					}
-					if (cell.adjMines === 0) {
-						floodFill(i, j);
-					}
-				}
-			}
-		}
-	}
-};
-
-const checkWin = () => {
-	let allNonMinesRevealed = true;
-
-	for (let i = 0; i < rows; i++) {
-		for (let j = 0; j < cols; j++) {
-			const cell = minefield[i][j];
-			//* If the cell does not have a mine and is not revealed, game continues
-			if (!cell.mine && !cell.revealed) {
-				allNonMinesRevealed = false;
-				break;
-			}
-		}
-	}
-
-	if (allNonMinesRevealed) {
-		renderEndPage(true);
-		// gameState = "win";
-	}
-};
-
-function init() {
-	initBoard();
-	renderBoard();
-	startTimer();
-
-	startScreen.style.display = "none";
-	gameScreen.style.display = "block";
+function renderInit() {
+	renderLabels();
+	renderSelect();
+	renderStartButton();
 }
 
 renderInit();

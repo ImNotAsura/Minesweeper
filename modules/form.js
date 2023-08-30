@@ -1,55 +1,43 @@
-const settingsForm = document.getElementById("settings-form");
+import { init } from "./gameLogic";
+import { difficulty, gameBoard } from "./constants";
 
-const renderLabels = () => {
-	const inputFields = [
-		{ label: "Rows:", id: "rows", value: "9" },
-		{ label: "Columns:", id: "cols", value: "9" },
-		{ label: "Number of Mines:", id: "numMines", value: "12" },
-	];
+document.getElementById("difficulty").addEventListener("change", (event) => {
+	handleDifficultyChange(event);
+});
 
-	for (const field of inputFields) {
-		const label = document.createElement("label");
-		label.setAttribute("for", field.id);
-		label.textContent = field.label + " ";
-		settingsForm.appendChild(label);
+document.getElementById("settings-form").addEventListener("submit", (event) => {
+	handleFormSubmit(event);
+});
 
-		const input = document.createElement("input");
-		input.setAttribute("type", "number");
-		input.setAttribute("id", field.id);
-		input.setAttribute("name", field.id);
-		input.setAttribute("value", field.value);
-		input.setAttribute("required", "");
-		settingsForm.appendChild(input);
-
-		settingsForm.appendChild(document.createElement("br"));
-		settingsForm.appendChild(document.createElement("br"));
-	}
+const handleDifficultyChange = (event) => {
+	gameBoard.selectedDifficulty = event.target.value;
+	const { rows, cols, numMines } = getDifficultyValues(
+		gameBoard.selectedDifficulty,
+	);
+	renderForm(rows, cols, numMines);
 };
 
-const renderSelect = () => {
-	const difficultySelect = document.querySelector("#difficulty");
-	const difficulties = ["easy", "medium", "hard", "custom"];
+const handleFormSubmit = (event) => {
+	event.preventDefault();
 
-	difficulties.forEach((difficulty) => {
-		const option = document.createElement("option");
-		option.value = difficulty;
-		option.textContent =
-			difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-		difficultySelect.appendChild(option);
-	});
+	const form = event.target;
+	gameBoard.rows = form.rows.value;
+	gameBoard.cols = form.cols.value;
+	gameBoard.numMines = form.numMines.value;
+
+	init();
 };
 
-const renderStartButton = () => {
-	const startButton = document.createElement("button");
-	startButton.setAttribute("type", "submit");
-	startButton.textContent = "Start Game";
-	settingsForm.appendChild(startButton);
+const renderForm = (rows, cols, numMines) => {
+	const rowsInput = document.getElementById("rows");
+	const colsInput = document.getElementById("cols");
+	const numMinesInput = document.getElementById("numMines");
+
+	rowsInput.value = rows;
+	colsInput.value = cols;
+	numMinesInput.value = numMines;
 };
 
-function renderInit() {
-	renderLabels();
-	renderSelect();
-	renderStartButton();
-}
-
-export { renderInit };
+const getDifficultyValues = (selectedDifficulty) => {
+	return difficulty[selectedDifficulty];
+};
